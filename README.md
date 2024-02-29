@@ -11,3 +11,18 @@ OpenPCDet
 ├── pcdet
 ├── tools
 ```
+Citation
+
+If you find our work useful in your research, please consider citing:
+
+```latex
+@article{yan2023high,
+  title={High-order Structural Relation Distillation Networks from LiDAR to Monocular Image 3D Detectors},
+  author={Yan, Weiqing and Xu, Long and Liu, Hao and Tang, Chang and Zhou, Wujie},
+  journal={IEEE Transactions on Intelligent Vehicles},
+  year={2023},
+  publisher={IEEE}
+}
+```
+
+If you have any problems, contact me via ydxulong@163.com.
