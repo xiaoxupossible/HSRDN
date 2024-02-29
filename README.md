@@ -51,12 +51,32 @@ python -m pcdet.datasets.kitti.kitti_dataset create_kitti_infos tools/cfgs/datas
 ```python 
 python -m pcdet.datasets.kitti.kitti_dataset_cmkd create_kitti_infos_unlabel tools/cfgs/dataset_configs/kitti_dataset.yaml
 ```
-## To reproduce our results with SECOND teacher, use
+## Evaluate the pretrained models
+* Test with a pretrained model: 
+```python
+python test_cmkd.py --cfg ${CONFIG_FILE} --ckpt ${CKPT}
 ```
-CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 train_cmkd.py --launcher pytorch --cfg ../tools/cfgs/kitti_models/CMKD/cmkd_kitti_eigen_R50_scd_bev.yaml --tcp_port 16677 --pretrained_lidar_model ../checkpoints/second_teacher.pth
 
-CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 train_cmkd.py --launcher pytorch --cfg ../tools/cfgs/kitti_models/CMKD/cmkd_kitti_eigen_R50_scd_V2.yaml  --tcp_port 16677 --pretrained_lidar_model ../checkpoints/second_teacher.pth
---pretrained_img_model ../output/kitti_models/CMKD/cmkd_kitti_eigen_R50_scd_bev/default/ckpt/checkpoint_epoch_30.pth
+* To test all the saved checkpoints of a specific training setting and draw the performance curve on the Tensorboard, add the `--eval_all` argument: 
+```python
+python test_cmkd.py --cfg ${CONFIG_FILE} --ckpt_dir ${CKPT_DIR}  --eval_all
+```
+
+* To test with multiple GPUs:
+```python
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 test_cmkd.py --launcher pytorch --cfg ${CONFIG_FILE} --tcp_port 16677 --ckpt ${CKPT}
+```
+
+### Train a model
+
+* Train with a single GPU:
+```python
+python train_cmkd.py --cfg_file ${CONFIG_FILE} --pretrained_lidar_model ${TEACHER_MODEL_PATH}
+```
+
+* Train with multiple GPUs or multiple machines
+```
+CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 train_cmkd.py --launcher pytorch --cfg ${CONFIG_FILE} --tcp_port 16677 --pretrained_lidar_model ${TEACHER_MODEL_PATH}
 ```
 ## Citation
 If you find our work useful in your research, please consider citing:
