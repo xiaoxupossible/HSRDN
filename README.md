@@ -22,10 +22,35 @@ numpy>=1.21.6
 
 scikit-learn>=1.0.2
 
-## Datasets
+## KITTI Dataset
 
-The Synthetic3d, Prokaryotic, and MNIST-USPS datasets are placed in "data" folder. The others dataset could be downloaded from [cloud](https://pan.baidu.com/s/1XNWW8UqTcPMkw9NpiKqvOQ). key: data
+* Please download the official [KITTI 3D object detection](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d) dataset and organize the downloaded files as follows (the road planes could be downloaded from [[road plane]](https://drive.google.com/file/d/1d5mq0RXRnvHPVeKx6Q612z0YRO1t2wAp/view?usp=sharing), which are optional for data augmentation in the training):
+* If you would like to use the depth maps for trainval set, download the precomputed [depth maps](https://drive.google.com/file/d/1qFZux7KC_gJ0UHEg-qGJKqteE9Ivojin/view?usp=sharing) for the KITTI trainval set
+* Download the [KITTI Raw data](https://www.cvlibs.net/datasets/kitti/raw_data.php) and put in into data/kitti/raw/KITTI_Raw
+* (optional) If you want to use the [sparse depth maps](https://www.cvlibs.net/datasets/kitti/eval_depth_all.php) for KITTI Raw, download it and put it into data/kitti/raw/depth_sparse
 
+```
+OpenPCDet
+├── data
+│   ├── kitti
+│   │   │── ImageSets
+│   │   │── training
+│   │   │   ├──calib & velodyne & label_2 & image_2 & (optional: planes) & (optional: depth_2)
+│   │   │── testing
+│   │   │   ├──calib & velodyne & image_2
+│   │   │── raw
+|   |   |   |——calib & KITTI_Raw & (optional: depth_sparse)
+├── pcdet
+├── tools
+```
+* Generate the data infos by running the following command (kitti train, kitti val, kitti test): 
+```python 
+python -m pcdet.datasets.kitti.kitti_dataset create_kitti_infos tools/cfgs/dataset_configs/kitti_dataset.yaml
+```
+* Generate the data infos by running the following command (kitti train + eigen clean, unlabeled):
+```python 
+python -m pcdet.datasets.kitti.kitti_dataset_cmkd create_kitti_infos_unlabel tools/cfgs/dataset_configs/kitti_dataset.yaml
+```
 ## To reproduce our results with SECOND teacher, use
 ```
 CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 train_cmkd.py --launcher pytorch --cfg ../tools/cfgs/kitti_models/CMKD/cmkd_kitti_eigen_R50_scd_bev.yaml --tcp_port 16677 --pretrained_lidar_model ../checkpoints/second_teacher.pth
